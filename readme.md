@@ -36,7 +36,7 @@ How to use cbuff:
     The default storage dir is downloads.
     The users will be able to:
     - push one commands                                         -> cbuff push | p <command> <alias>
-    - push multiple commands                                    -> cbuff push | p "<command1>:<command2>" <alias>
+    - push multiple commands                                    -> cbuff push | p "<command1>::<command2>" <alias>
     - push a path when alias is prefixed by @ (open terminal)   -> cbuff push | p <path> @<alias>
     - view the commands with their unique alias key             -> cbuff view | v
     - run pushed commands with that alias key                   -> cbuff <alias>
