@@ -1,3 +1,8 @@
+![cbuff](https://github.com/RaghavGohil/cbuff/assets/71706645/4343a690-f4b4-402a-a83f-5849803cb642)
+
+![version](https://img.shields.io/badge/version-1.0.0-blue)
+![python](https://img.shields.io/badge/lang-python3-green)
+
 # cbuff - Command Buffer
 
 ```cbuff``` (short for Command Buffer) is a versatile command-line tool that empowers users to efficiently store, manage, and execute frequently used commands and workflows. With its user-friendly interface, cbuff simplifies command-line tasks, improves productivity, and reduces the risk of errors.
