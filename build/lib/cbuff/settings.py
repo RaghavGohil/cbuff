@@ -1,6 +1,6 @@
 name = 'cbuff'
-version = '1.0.0'
-description = 'A command buffer for windows command prompt.'
+version = '1.0.1'
+description = 'A command buffer for terminals.'
 author = 'RaghavGohil'
 author_email = 'raghavgohil2004@gmail.com'
 project_url = 'https://github.com/RaghavGohil/cbuff'
@@ -16,7 +16,7 @@ entry_points = '''
 exclude_packages = ('tests')
 license = 'MIT LICENSE'
 license_files = ('LICENSE.txt')
-keywords = 'command buffer for windows command prompt '
+keywords = 'command buffer terminal storage windows linux macos '
 install_requires = ['readme_renderer >= 21.0']
 include_package_data = True
 python_requires='>=3.0'

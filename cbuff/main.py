@@ -31,8 +31,7 @@ def exec_op()->None:
     set_buffer()
     try:
         if sys.argv[1] == 'push' or sys.argv[1] == 'p':
-            push_command(sys.argv[3],sys.argv[2]) # push the alias and command in order
-
+            push_command(sys.argv[3],sys.argv[2]) # push the description, alias and command in order
         elif sys.argv[1] == 'view' or sys.argv[1] == 'v':
             view_commands()
 
@@ -52,31 +51,36 @@ def exec_op()->None:
     
     The default storage dir is downloads.
     The users will be able to:
-    - push one commands                                         -> cbuff push | p <command> <alias>
-    - push multiple commands                                    -> cbuff push | p "<command1>::<command2>" <alias>
+    - push one command                                          -> cbuff push | p <command> <alias>
+    - push multiple commands                                    -> cbuff push | p "<command1>&&<command2>" <alias>
     - push a path when alias is prefixed by @ (open terminal)   -> cbuff push | p <path> @<alias>
     - view the commands with their unique alias key             -> cbuff view | v
     - run pushed commands with that alias key                   -> cbuff <alias>
+    - pass params when you run alias (command must contain {})  -> cbuff <alias> <param1> <param2> ...
     - remove the pushed commands with the key                   -> cbuff remove | r <alias>
     - open the buffer in notepad/vim for quick edit             -> cbuff open | o
     - reset the system                                          -> cbuff reset | re
-    - get help                                                  -> cbuff help | h
+    - get help for cbuff                                        -> cbuff help | h
 
-    Note that you can use "" while making an alias for storing commands having spaces.
+    * You can provide an alias for cbuff altogether. Instead of typing cbuff you can define something like 'cb' in your terminal.
+    * You can use "" while making an alias for storing commands having spaces.
+    * You can execute cbuff commands inside cbuff.
+    * You can combine cbuff commands like cbuff p "cbuff reset&&cbuff open" quick-edit
+      and run it like : cbuff quick-edit or cb quick-edit if defined as stated earlier.
                 ''')
         elif sys.argv[1] not in COMMANDS: # if input is an alias
-            execute_command(sys.argv[1])
+            param_list=sys.argv[2:]
+            execute_command(sys.argv[1],param_list)
     except Exception as e:
         print("Invalid use of cbuff. Use cbuff help for more information.")
-        print("\n",e)
+        #print("\n",e)
 
 def set_buffer()->None:
-    with open(BUFFER_PATH , 'a') as buffer:
+    with open(BUFFER_PATH , 'a'):
         pass
 
-def execute_command(alias:str)->None:
+def execute_command(alias:str,params:list=[])->None:
     json_data = {}
-    c_list = []
     with open(BUFFER_PATH , 'r') as buffer:
         json_data = json.loads(get_data(buffer.read()))
         keys = json_data.keys()
@@ -84,20 +88,14 @@ def execute_command(alias:str)->None:
             if alias[0] == '@': # is a path alias
                 if sys.platform.startswith('win'):
                     # On Windows, use the "start" command to open a new command prompt window
-                    subprocess.Popen(['cmd', '/K', f'cd /D {json_data[alias]}'],shell=True,creationflags=subprocess.DETACHED_PROCESS)
+                    subprocess.Popen(['cmd', '/K', f'cd /D {json_data[alias].format(*params)}'],shell=True,creationflags=subprocess.DETACHED_PROCESS)
 
                 elif sys.platform.startswith('linux') or sys.platform.startswith('darwin'):
                     # On Linux and macOS, use the terminal emulator to open a new terminal window
                     terminal = os.getenv('TERMINAL', 'x-terminal-emulator')  # Use 'x-terminal-emulator' as the default
-                    subprocess.Popen([terminal, '--working-directory', json_data[alias]],shell=True,creationflags=subprocess.DETACHED_PROCESS)
+                    subprocess.Popen([terminal, '--working-directory', json_data[alias].format(*params)],shell=True,creationflags=subprocess.DETACHED_PROCESS)
             else:
-                if '::' in json_data[alias]:
-                    c_list = json_data[alias].split("::")
-                    print(c_list)
-                    for commands in c_list:
-                        os.system(commands)
-                else:
-                    os.system(json_data[alias])
+                os.system(json_data[alias].format(*params))
         else:
             exit_r('Alias not found. Define an alias using cbuff push.')
 
@@ -118,7 +116,7 @@ def open_buffer():
         subprocess.run("vim "+BUFFER_PATH)
 
 def reset_buffer():
-    with open(BUFFER_PATH , 'w') as buffer:
+    with open(BUFFER_PATH , 'w'):
         pass
 
 def remove_command(alias:str)->None:
